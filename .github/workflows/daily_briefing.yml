@@ -1,0 +1,33 @@
+name: 일일 뉴스 브리핑
+
+on:
+  schedule:
+    - cron: '0 21 * * *'  # 매일 오전 6시 KST (UTC 21:00)
+  workflow_dispatch:       # GitHub UI에서 수동 실행 가능
+
+jobs:
+  briefing:
+    name: 뉴스 수집 및 텔레그램 발송
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Python 3.12 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: 의존 패키지 설치
+        run: pip install -r requirements.txt
+
+      - name: 뉴스 브리핑 실행
+        run: python main.py --now
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
