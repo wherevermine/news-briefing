@@ -5,6 +5,9 @@ on:
     - cron: '0 21 * * *'  # 매일 오전 6시 KST (UTC 21:00)
   workflow_dispatch:       # GitHub UI에서 수동 실행 가능
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   briefing:
     name: 뉴스 수집 및 텔레그램 발송
