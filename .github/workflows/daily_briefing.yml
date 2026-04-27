@@ -10,6 +10,11 @@ jobs:
     name: 뉴스 수집 및 텔레그램 발송
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
 
     steps:
       - name: 코드 체크아웃
@@ -24,10 +29,15 @@ jobs:
       - name: 의존 패키지 설치
         run: pip install -r requirements.txt
 
+      - name: 환경변수 확인
+        run: |
+          python -c "
+          import os
+          for key in ['GEMINI_API_KEY', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'NEWSAPI_KEY']:
+              val = os.getenv(key, '')
+              status = f'SET ({len(val)}자)' if val else 'NOT SET ❌'
+              print(f'{key}: {status}')
+          "
+
       - name: 뉴스 브리핑 실행
         run: python main.py --now
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
